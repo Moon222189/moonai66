@@ -2,7 +2,6 @@ import os
 import pickle
 from auto_web_learn import auto_learn
 from embeddings import create_embeddings  # your embedding logic
-# We skip heavy model training for Vercel
 
 KNOWLEDGE_FILE = "data/brainknowledge.txt"
 EMBEDDINGS_FILE = "embeddings/lines.pkl"
@@ -10,12 +9,12 @@ EMBEDDINGS_FILE = "embeddings/lines.pkl"
 def run_auto_master():
     print("🚀 MoonAI: Starting auto-learn cycle...")
 
-    # --- Step 1: Fetch new knowledge ---
+    # Step 1: Fetch new knowledge
     print("📚 Fetching new knowledge...")
     auto_learn()
-    print("✅ Knowledge updated.")
+    print("✅ Knowledge update complete!")
 
-    # --- Step 2: Load all knowledge ---
+    # Step 2: Load all knowledge
     if not os.path.exists(KNOWLEDGE_FILE):
         os.makedirs(os.path.dirname(KNOWLEDGE_FILE), exist_ok=True)
         open(KNOWLEDGE_FILE, "w").close()
@@ -25,16 +24,14 @@ def run_auto_master():
 
     print(f"📝 Loaded {len(knowledge_lines)} knowledge entries.")
 
-    # --- Step 3: Update embeddings ---
+    # Step 3: Generate embeddings
     print("🔗 Generating embeddings...")
     embeddings = create_embeddings(knowledge_lines)
     with open(EMBEDDINGS_FILE, "wb") as f:
         pickle.dump(embeddings, f)
     print(f"💾 Embeddings saved to {EMBEDDINGS_FILE}")
 
-    # --- Step 4: Light retraining / preparation ---
-    # Skip heavy model training for Vercel. You can optionally load model weights here.
-
+    # Step 4: Skip heavy training for Vercel
     print("✅ Auto-master cycle complete.")
     return {"knowledge_entries": len(knowledge_lines)}
 
