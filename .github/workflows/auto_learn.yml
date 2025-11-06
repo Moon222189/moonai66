@@ -1,0 +1,31 @@
+name: MoonAI Auto Learn
+
+# Run automatically every 6 hours, or manually
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # Every 6 hours
+  workflow_dispatch:         # Optional: allows manual trigger
+
+jobs:
+  auto_learn:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the repo
+    - uses: actions/checkout@v3
+
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run MoonAI auto-learning script
+    - name: Run Auto Master
+      run: python auto_master.py
