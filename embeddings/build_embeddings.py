@@ -7,15 +7,15 @@ import pickle
 with open("data/brainknowledge.txt", "r", encoding="utf-8") as f:
     lines = f.read().splitlines()
 
-# Vectorize with TF-IDF
+# TF-IDF vectorization
 vectorizer = TfidfVectorizer()
 vectors = vectorizer.fit_transform(lines).toarray().astype('float32')
 
-# Build FAISS index for semantic search
+# FAISS index for semantic search
 index = faiss.IndexFlatL2(vectors.shape[1])
 index.add(vectors)
 
-# Save
+# Save embeddings
 faiss.write_index(index, "embeddings/knowledge.index")
 with open("embeddings/vectorizer.pkl", "wb") as f:
     pickle.dump(vectorizer, f)
