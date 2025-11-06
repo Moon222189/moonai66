@@ -1,6 +1,7 @@
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const message = input.value;
+    if (!message) return;
     input.value = "";
 
     const chatbox = document.getElementById("chatbox");
