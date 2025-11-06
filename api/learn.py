@@ -2,11 +2,11 @@ import json
 import sys
 import os
 
-# Add root to Python path so we can import existing scripts
+# Add root folder to Python path
 sys.path.append(os.getcwd())
 
-# Import your existing script
-from auto_web_learn import auto_learn  # adjust import if needed
+# Import your auto-learn function
+from auto_web_learn import auto_learn
 
 def handler(request):
     try:
