@@ -11,7 +11,7 @@ moon_brain = Brain(knowledge_file="brainknowledge.txt")
 def chat():
     data = request.get_json()
     message = data.get("message", "")
-    response = moon_brain.query(message)
+    response = moon_brain.generate_response(message)
     return jsonify({"response": response})
 
 if __name__ == "__main__":
