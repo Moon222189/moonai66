@@ -2,7 +2,8 @@ import json
 import sys
 import os
 
-sys.path.append(os.getcwd())  # so root scripts can be imported
+# Allow importing scripts from root
+sys.path.append(os.getcwd())
 
 from auto_web_learn import auto_learn
 
