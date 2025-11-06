@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class SmallTransformer(nn.Module):
-    def __init__(self, vocab_size, embed_dim=128, num_heads=4, num_layers=2, ff_dim=256, max_len=512):
+    def __init__(self, vocab_size, embed_dim=256, num_heads=8, num_layers=4, ff_dim=512, max_len=512):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embed_dim)
         self.pos_embedding = nn.Embedding(max_len, embed_dim)
