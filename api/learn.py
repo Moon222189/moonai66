@@ -1,13 +1,12 @@
 import json
-from auto_master import run_auto_master  # Directly import your auto-master logic
+from moonai_core.auto_master import run_auto_master  # Updated import
 
 def handler(request):
     """
-    Vercel serverless function to trigger MoonAI auto-learning with detailed logs.
+    Vercel serverless function to trigger MoonAI auto-learning with logs.
     """
     try:
-        # Run auto-master and collect logs
-        result = run_auto_master(log_enabled=True)  # Ensure auto_master supports logging
+        result = run_auto_master(log_enabled=True)
         logs = result.get("logs", [])
 
         return {
