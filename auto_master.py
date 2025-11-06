@@ -1,7 +1,7 @@
 import os
 import pickle
 from auto_web_learn import auto_learn
-from embeddings import create_embeddings  # your embedding logic
+from embeddings import create_embeddings
 
 KNOWLEDGE_FILE = "data/brainknowledge.txt"
 EMBEDDINGS_FILE = "embeddings/lines.pkl"
@@ -31,7 +31,6 @@ def run_auto_master():
         pickle.dump(embeddings, f)
     print(f"💾 Embeddings saved to {EMBEDDINGS_FILE}")
 
-    # Step 4: Skip heavy training for Vercel
     print("✅ Auto-master cycle complete.")
     return {"knowledge_entries": len(knowledge_lines)}
 
