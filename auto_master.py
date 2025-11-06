@@ -1,39 +1,42 @@
 import os
 import pickle
 from auto_web_learn import auto_learn
-from model import train_model  # your training logic
-from embeddings import create_embeddings  # your embeddings logic
+from embeddings import create_embeddings  # your embedding logic
+# We skip heavy model training for Vercel
 
 KNOWLEDGE_FILE = "data/brainknowledge.txt"
 EMBEDDINGS_FILE = "embeddings/lines.pkl"
 
-# --- Step 1: Auto-learn new knowledge ---
-print("Fetching new knowledge from trusted sources...")
-auto_learn()
-print("Knowledge update complete!")
+def run_auto_master():
+    print("🚀 MoonAI: Starting auto-learn cycle...")
 
-# --- Step 2: Load knowledge ---
-if not os.path.exists(KNOWLEDGE_FILE):
-    print(f"No knowledge file found at {KNOWLEDGE_FILE}, creating empty file.")
-    os.makedirs(os.path.dirname(KNOWLEDGE_FILE), exist_ok=True)
-    open(KNOWLEDGE_FILE, "w").close()
+    # --- Step 1: Fetch new knowledge ---
+    print("📚 Fetching new knowledge...")
+    auto_learn()
+    print("✅ Knowledge updated.")
 
-with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as f:
-    knowledge_lines = [line.strip() for line in f if line.strip()]
+    # --- Step 2: Load all knowledge ---
+    if not os.path.exists(KNOWLEDGE_FILE):
+        os.makedirs(os.path.dirname(KNOWLEDGE_FILE), exist_ok=True)
+        open(KNOWLEDGE_FILE, "w").close()
 
-print(f"Loaded {len(knowledge_lines)} knowledge entries.")
+    with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as f:
+        knowledge_lines = [line.strip() for line in f if line.strip()]
 
-# --- Step 3: Generate embeddings ---
-print("Generating embeddings...")
-embeddings = create_embeddings(knowledge_lines)
-with open(EMBEDDINGS_FILE, "wb") as f:
-    pickle.dump(embeddings, f)
-print(f"Embeddings saved to {EMBEDDINGS_FILE}")
+    print(f"📝 Loaded {len(knowledge_lines)} knowledge entries.")
 
-# --- Step 4: Train / retrain model ---
-print("Training AI model...")
-train_model(knowledge_lines, embeddings)
-print("Model training complete!")
+    # --- Step 3: Update embeddings ---
+    print("🔗 Generating embeddings...")
+    embeddings = create_embeddings(knowledge_lines)
+    with open(EMBEDDINGS_FILE, "wb") as f:
+        pickle.dump(embeddings, f)
+    print(f"💾 Embeddings saved to {EMBEDDINGS_FILE}")
 
-# --- Step 5: Finish ---
-print("MoonAI auto-master cycle complete!")
+    # --- Step 4: Light retraining / preparation ---
+    # Skip heavy model training for Vercel. You can optionally load model weights here.
+
+    print("✅ Auto-master cycle complete.")
+    return {"knowledge_entries": len(knowledge_lines)}
+
+if __name__ == "__main__":
+    run_auto_master()
