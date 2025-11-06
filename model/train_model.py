@@ -2,20 +2,19 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from torch.nn import CrossEntropyLoss
 from torch.optim import Adam
-from small_transformer import SmallTransformer
+from transformer import SmallTransformer
 import numpy as np
 import pickle
 
-# 1. Load and tokenize brainknowledge.txt
+# --- Load Knowledge ---
 with open("data/brainknowledge.txt", "r", encoding="utf-8") as f:
     text = f.read().lower()
 
-# Simple character-level tokenizer
+# Character-level tokenizer
 chars = sorted(list(set(text)))
-stoi = {c:i for i,c in enumerate(chars)}
-itos = {i:c for i,c in enumerate(chars)}
+stoi = {c: i for i, c in enumerate(chars)}
+itos = {i: c for i, c in enumerate(chars)}
 vocab_size = len(chars)
-
 data = [stoi[c] for c in text]
 
 class CharDataset(Dataset):
@@ -32,14 +31,15 @@ class CharDataset(Dataset):
 dataset = CharDataset(data)
 loader = DataLoader(dataset, batch_size=64, shuffle=True)
 
-# 2. Initialize model
+# --- Initialize Model ---
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = SmallTransformer(vocab_size).to(device)
 optimizer = Adam(model.parameters(), lr=1e-3)
 criterion = CrossEntropyLoss()
 
-# 3. Training loop
-for epoch in range(10):
+# --- Training Loop ---
+epochs = 20  # Increase epochs for more learning
+for epoch in range(epochs):
     for x_batch, y_batch in loader:
         x_batch, y_batch = x_batch.to(device), y_batch.to(device)
         optimizer.zero_grad()
@@ -47,9 +47,9 @@ for epoch in range(10):
         loss = criterion(logits.view(-1, vocab_size), y_batch.view(-1))
         loss.backward()
         optimizer.step()
-    print(f"Epoch {epoch+1}, Loss: {loss.item():.4f}")
+    print(f"Epoch {epoch+1}/{epochs}, Loss: {loss.item():.4f}")
 
-# Save model and tokenizer
+# --- Save Model ---
 torch.save(model.state_dict(), "model/moonai_model.pt")
 with open("model/tokenizer.pkl", "wb") as f:
     pickle.dump({"stoi": stoi, "itos": itos}, f)
