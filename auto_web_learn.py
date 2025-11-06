@@ -3,13 +3,14 @@ from bs4 import BeautifulSoup
 import re
 import os
 import pickle
-from moonai_core.embeddings import create_embeddings, cosine_similarity  # updated import
+from moonai_core.embeddings import create_embeddings, cosine_similarity
 
+# Paths
 KNOWLEDGE_FILE = "data/brainknowledge.txt"
 EMBEDDINGS_FILE = "embeddings/lines.pkl"
-SIMILARITY_THRESHOLD = 0.8  # Only add knowledge if unique enough
+SIMILARITY_THRESHOLD = 0.8  # Avoid duplicates
 
-# --- Helper: clean text ---
+# --- Text cleaning ---
 def clean_text(text):
     text = re.sub(r'\[\d+\]', '', text)  # remove references like [1]
     text = re.sub(r'\s+', ' ', text)
@@ -28,7 +29,7 @@ def load_existing_knowledge_and_embeddings():
         embeddings = create_embeddings(lines)
     return lines, embeddings
 
-# --- Append new knowledge if unique ---
+# --- Append knowledge if unique ---
 def append_new_knowledge(new_text, existing_lines, existing_embeddings, log_enabled=False):
     logs = []
     new_emb = create_embeddings([new_text])[0]
@@ -36,6 +37,7 @@ def append_new_knowledge(new_text, existing_lines, existing_embeddings, log_enab
         if cosine_similarity(new_emb, emb) > SIMILARITY_THRESHOLD:
             return existing_lines, existing_embeddings, logs  # skip duplicate
     # Save knowledge
+    os.makedirs(os.path.dirname(KNOWLEDGE_FILE), exist_ok=True)
     with open(KNOWLEDGE_FILE, "a", encoding="utf-8") as f:
         f.write(new_text + "\n\n")
     existing_lines.append(new_text)
@@ -43,7 +45,6 @@ def append_new_knowledge(new_text, existing_lines, existing_embeddings, log_enab
     msg = "Added knowledge: " + new_text[:60] + "..."
     if log_enabled:
         logs.append(msg)
-    # Save embeddings
     with open(EMBEDDINGS_FILE, "wb") as f:
         pickle.dump(existing_embeddings, f)
     return existing_lines, existing_embeddings, logs
@@ -69,7 +70,7 @@ def fetch_gutenberg_text(book_url):
         print(f"Failed Gutenberg book: {e}")
         return ""
 
-# --- Fetch dynamic Wikipedia topics ---
+# --- Fetch Wikipedia topics dynamically ---
 def fetch_dynamic_wiki_topics(categories=None, limit_per_category=10):
     if categories is None:
         categories = ["Artificial_intelligence", "Physics", "Mathematics", "Computer_science"]
@@ -102,12 +103,8 @@ def fetch_news_summaries():
         print("Failed to fetch news:", e)
     return summaries[:5]
 
-# --- Main auto-learn ---
+# --- Main auto-learn function ---
 def auto_learn(log_enabled=False):
-    """
-    Fetches new knowledge from Wikipedia, Gutenberg, and news,
-    adds it to brainknowledge.txt if unique, and returns logs.
-    """
     existing_lines, existing_embeddings = load_existing_knowledge_and_embeddings()
     logs = []
 
