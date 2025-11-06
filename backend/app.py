@@ -3,9 +3,9 @@ from flask_cors import CORS
 from brain import Brain
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from frontend
+CORS(app)
 
-moon_brain = Brain()
+moon_brain = Brain(knowledge_file="brainknowledge.txt")
 
 @app.route("/chat", methods=["POST"])
 def chat():
