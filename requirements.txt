@@ -1,0 +1,7 @@
+torch
+transformers
+flask
+numpy
+scikit-learn
+faiss-cpu
+tqdm
