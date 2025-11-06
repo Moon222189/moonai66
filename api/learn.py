@@ -3,7 +3,6 @@ import subprocess
 
 def handler(request):
     try:
-        # Run auto_master.py
         result = subprocess.run(
             ["python", "auto_master.py"],
             capture_output=True,
