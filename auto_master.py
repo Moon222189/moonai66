@@ -1,7 +1,7 @@
 import os
 import pickle
-from auto_web_learn import auto_learn
-from embeddings import create_embeddings
+from moonai_core.auto_web_learn import auto_learn
+from moonai_core.embeddings import create_embeddings
 
 KNOWLEDGE_FILE = "data/brainknowledge.txt"
 EMBEDDINGS_FILE = "embeddings/lines.pkl"
@@ -17,13 +17,13 @@ def run_auto_master(log_enabled=False):
 
     log("🚀 MoonAI: Starting auto-learn cycle...")
 
-    # Step 1: Fetch new knowledge
+    # Fetch new knowledge
     log("📚 Fetching new knowledge...")
-    auto_learn_logs = auto_learn(log_enabled=True)  # Make sure auto_web_learn.py supports logs
+    auto_learn_logs = auto_learn(log_enabled=True)
     logs.extend(auto_learn_logs)
     log("✅ Knowledge update complete!")
 
-    # Step 2: Load all knowledge
+    # Load all knowledge
     if not os.path.exists(KNOWLEDGE_FILE):
         os.makedirs(os.path.dirname(KNOWLEDGE_FILE), exist_ok=True)
         open(KNOWLEDGE_FILE, "w").close()
@@ -33,7 +33,7 @@ def run_auto_master(log_enabled=False):
 
     log(f"📝 Loaded {len(knowledge_lines)} knowledge entries.")
 
-    # Step 3: Generate embeddings
+    # Generate embeddings
     log("🔗 Generating embeddings...")
     embeddings = create_embeddings(knowledge_lines)
     with open(EMBEDDINGS_FILE, "wb") as f:
