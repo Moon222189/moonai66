@@ -8,13 +8,18 @@ EMBEDDINGS_FILE = "embeddings/lines.pkl"
 
 def run_auto_master(log_enabled=False):
     logs = []
-    log = lambda msg: logs.append(msg) if log_enabled else print(msg)
+
+    def log(msg):
+        if log_enabled:
+            logs.append(msg)
+        else:
+            print(msg)
 
     log("🚀 MoonAI: Starting auto-learn cycle...")
 
     # Step 1: Fetch new knowledge
     log("📚 Fetching new knowledge...")
-    auto_learn_logs = auto_learn(log_enabled=True)  # Update auto_web_learn to support logs
+    auto_learn_logs = auto_learn(log_enabled=True)  # Make sure auto_web_learn.py supports logs
     logs.extend(auto_learn_logs)
     log("✅ Knowledge update complete!")
 
