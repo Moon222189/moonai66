@@ -1,17 +1,17 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from ai_engine import MoonAI
+from brain import Brain
 
 app = Flask(__name__)
-CORS(app)  # allow requests from frontend
+CORS(app)  # Allow requests from frontend
 
-moonai = MoonAI()
+moon_brain = Brain()
 
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
     message = data.get("message", "")
-    response = moonai.get_response(message)
+    response = moon_brain.query(message)
     return jsonify({"response": response})
 
 if __name__ == "__main__":
