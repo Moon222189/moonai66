@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import torch
-from model.small_transformer import SmallTransformer
+from transformer import SmallTransformer
 import pickle
 import faiss
 import numpy as np
@@ -9,8 +9,7 @@ from reasoning.logic_engine import infer_logic
 # Load model
 with open("model/tokenizer.pkl", "rb") as f:
     tokenizer = pickle.load(f)
-stoi = tokenizer["stoi"]
-itos = tokenizer["itos"]
+stoi, itos = tokenizer["stoi"], tokenizer["itos"]
 vocab_size = len(stoi)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -18,7 +17,7 @@ model = SmallTransformer(vocab_size).to(device)
 model.load_state_dict(torch.load("model/moonai_model.pt", map_location=device))
 model.eval()
 
-# Load FAISS embeddings
+# Load embeddings
 index = faiss.read_index("embeddings/knowledge.index")
 with open("embeddings/vectorizer.pkl", "rb") as f:
     vectorizer = pickle.load(f)
@@ -42,13 +41,13 @@ def index():
     if request.method == "POST":
         query = request.form["query"]
 
-        # 1. Reasoning from rules
+        # 1. Rule-based reasoning
         logic_results = infer_logic(query, knowledge_lines)
         
-        # 2. Use transformer to generate text
+        # 2. Transformer generation
         generated_text = generate_response(query)
         
-        # 3. Combine logic and generation
+        # 3. Combine both
         response = "Logic Results:\n" + "\n".join(logic_results) + "\n\nAI Says:\n" + generated_text
     return render_template("index.html", response=response)
 
