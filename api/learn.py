@@ -1,19 +1,20 @@
 import json
-import os
 import subprocess
 
 def handler(request):
     try:
-        # Step 1: Auto-learn new knowledge
-        subprocess.run(["python", "auto_web_learn.py"], check=True)
-
-        # Step 2: Run auto_master to update embeddings and model
-        subprocess.run(["python", "auto_master.py"], check=True)
-
+        # Run auto_master.py
+        result = subprocess.run(
+            ["python", "auto_master.py"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
         return {
             "statusCode": 200,
             "body": json.dumps({
-                "message": "MoonAI auto-learn executed successfully!"
+                "message": "MoonAI auto-learn executed successfully!",
+                "output": result.stdout
             })
         }
 
@@ -21,6 +22,7 @@ def handler(request):
         return {
             "statusCode": 500,
             "body": json.dumps({
-                "message": f"Error during auto-learn: {e}"
+                "message": "Error during auto-learn",
+                "error": e.stderr
             })
         }
